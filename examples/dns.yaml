@@ -1,0 +1,8 @@
+catalog: dns
+id: example.net
+domain: example.net
+dnssec: true
+xfr_allow: [ 192.0.2.1, 203.0.113.0, "2001:db8:1::1" ]
+records:
+    - { name: vps1, ttl: 600, type: A, data: 192.0.2.201 }
+    - { name: vps1, ttl: 600, type: AAAA, data: "2001:db8:32::201" }
