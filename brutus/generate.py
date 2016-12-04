@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
+
+# Python 2.x tweak
+from io import open
 
 import os
 import jinja2
@@ -26,6 +29,20 @@ class Generate:
         self.db = db
         self.rootdir = rootdir
         self.generate_keys = generate_keys
+
+    def generate_file(self, name, **kargs):
+        template = "{}/{}.j2".format(self.name, name)
+        target = os.path.join(self.rootdir, self.name, name)
+
+        output = self.template_env.get_template(template).render(**kargs)
+        # jinja2 seems to sometimes drop the final newline before end of file.
+        if not output.endswith("\n"):
+            output += "\n"
+
+        utils.makedirs(os.path.dirname(target))
+        print(target)
+        with open(target, "w") as stream:
+            stream.write(output)
 
 
 @register
