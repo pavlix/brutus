@@ -224,12 +224,12 @@ class LetsencryptGenerate(Generate):
             }
             if self.generate_keys and 'letsencrypt_domain_key' not in value:
                 self.db["domains"][name]["letsencrypt_domain_key"] = self.create_RSA_key()
-            san = [domain for domain in self.db["websites"]]
-            csr = self.create_CSR(san, self.db["domains"][name]["letsencrypt_domain_key"])
+                san = [domain for domain in self.db["websites"]]
+                csr = self.create_CSR(san, self.db["domains"][name]["letsencrypt_domain_key"])
 
-            keyfd = os.open('output/' + name + '.csr', os.O_WRONLY|os.O_CREAT)
-            os.write(keyfd, csr)
-            os.close(keyfd)
+                keyfd = os.open('output/' + name + '.csr', os.O_WRONLY|os.O_CREAT)
+                os.write(keyfd, csr)
+                os.close(keyfd)
 
             filename = os.path.join(basedir, name + ".ini")
             utils.makedirs(os.path.dirname(filename))
