@@ -195,7 +195,6 @@ class LetsencryptGenerate(Generate):
         tempdir = tempfile.mkdtemp()
         keyfifo = os.path.join(tempdir, 'keyfifo')
         conffifo = os.path.join(tempdir, 'conffifo')
-        print(tempdir)
         keyfd = os.open(keyfifo, os.O_WRONLY|os.O_CREAT)
         os.write(keyfd, key)
         os.close(keyfd)
@@ -209,7 +208,7 @@ class LetsencryptGenerate(Generate):
         if self.generate_keys and 'letsencrypt_account_key' not in self.db["instances"][None]:
             self.db["instances"][None]["letsencrypt_account_key"] = self.create_RSA_key()
 
-        basedir = os.path.join(self.rootdir, self.name, "etc", "letsencrypt", "configuration")
+        basedir = os.path.join(self.rootdir, self.name, "etc", "letsencrypt")
         template = self.template_env.get_template('letsencrypt/le.ini.j2')
         for name, value in sorted(self.db["domains"].items()):
             if ('dns' not in value['services']) or ('tsigsecret' not in value):
@@ -226,8 +225,8 @@ class LetsencryptGenerate(Generate):
                 self.db["domains"][name]["letsencrypt_domain_key"] = self.create_RSA_key()
                 san = [domain for domain in self.db["websites"]]
                 csr = self.create_CSR(san, self.db["domains"][name]["letsencrypt_domain_key"])
-
-                keyfd = os.open('output/' + name + '.csr', os.O_WRONLY|os.O_CREAT)
+                utils.makedirs(basedir)
+                keyfd = os.open(os.path.join(basedir, name + '.csr'), os.O_WRONLY | os.O_CREAT)
                 os.write(keyfd, csr)
                 os.close(keyfd)
 
